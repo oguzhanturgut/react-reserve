@@ -26,7 +26,7 @@ const OrderSchema = new Schema(
     },
     total: {
       type: Number,
-      required: trues,
+      required: true,
     },
   },
   {
