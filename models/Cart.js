@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const { String, ObjectId, Number } = Schema.Types;
+const { ObjectId, Number } = Schema.Types;
 
 const CartSchema = new Schema({
   user: {
