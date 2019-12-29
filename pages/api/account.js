@@ -5,7 +5,7 @@ import connectDb from '../../utils/connectDb';
 connectDb();
 
 const handleGetRequest = async (req, res) => {
-  if (!req.headers.authorization) {
+  if (!('authorization' in req.headers)) {
     return res.status(401).send('No authorization token');
   }
   try {
