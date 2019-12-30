@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import Cart from '../../models/Cart';
 import Order from '../../models/Order';
 import calculateCartTotal from '../../utils/calculateCartTotal';
+import connectDb from '../../utils/connectDb';
+
+connectDb();
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -15,6 +18,7 @@ export default async (req, res) => {
       path: 'products.product',
       model: 'Product',
     });
+    const { cartTotal, stripeTotal } = calculateCartTotal(cart.products);
     const prevCustomer = await stripe.customers.list({
       email: paymentData.email,
       limit: 1,
