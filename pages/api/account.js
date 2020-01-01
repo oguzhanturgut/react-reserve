@@ -8,6 +8,7 @@ const handleGetRequest = async (req, res) => {
   if (!('authorization' in req.headers)) {
     return res.status(401).send('No authorization token');
   }
+
   try {
     const { userId } = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
     const user = await User.findOne({ _id: userId });
@@ -17,7 +18,6 @@ const handleGetRequest = async (req, res) => {
       res.status(404).send('User not found');
     }
   } catch (error) {
-    console.error(error);
     res.status(403).send('Invalid token');
   }
 };
@@ -31,10 +31,10 @@ const handlePutRequest = async (req, res) => {
 export default async (req, res) => {
   switch (req.method) {
     case 'GET':
-      await handleGetRequest();
+      await handleGetRequest(req, res);
       break;
     case 'PUT':
-      await handlePutRequest();
+      await handlePutRequest(req, res);
       break;
     default:
       res.status(405).send(`Method ${req.method} not allowed`);

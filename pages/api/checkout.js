@@ -12,6 +12,7 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async (req, res) => {
   const { paymentData } = req.body;
+
   try {
     const { userId } = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
     const cart = await Cart.findOne({ user: userId }).populate({
@@ -26,15 +27,15 @@ export default async (req, res) => {
     const isExistingCustomer = prevCustomer.data.length > 0;
     let newCustomer;
     if (!isExistingCustomer) {
-      await stripe.customers.create({
+      newCustomer = await stripe.customers.create({
         email: paymentData.email,
-        sourde: paymentData.id,
+        source: paymentData.id,
       });
     }
     const customer = (isExistingCustomer && prevCustomer.data[0].id) || newCustomer.id;
     const charge = await stripe.charges.create(
       {
-        currency: 'USD',
+        currency: 'usd',
         amount: stripeTotal,
         receipt_email: paymentData.email,
         customer,
@@ -51,7 +52,7 @@ export default async (req, res) => {
       products: cart.products,
     }).save();
     await Cart.findOneAndUpdate({ _id: cart._id }, { $set: { products: [] } });
-    res.status(200).send('Checkout successful!');
+    res.status(200).send('Checkout successful');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error processing charge');
